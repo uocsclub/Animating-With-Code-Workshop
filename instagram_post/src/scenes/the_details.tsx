@@ -38,8 +38,8 @@ export default makeScene2D(function* (view) {
     événement: "Code && Café",
     atelier: "Animation avec du Code"
 }`
-    const WHERE_ENG = `${DECELERATION} where = uOttawa.TBA`
-    const WHERE_FR = `${DECELERATION} où = uOttawa.TBA`
+    const WHERE_ENG = `${DECELERATION} where = uOttawa.Lamoureux.243`
+    const WHERE_FR = `${DECELERATION} où = uOttawa.Lamoureux.243`
 
     const WHEN_ENG =
 `${DECELERATION} when = new DateTime(
