@@ -164,13 +164,111 @@ These are all the functions:
  - moveBelow
  - removeChildren
 
-You can read more about them (here).[https://motioncanvas.io/docs/hierarchy]
+You can read more about them (here)[https://motioncanvas.io/docs/hierarchy].
 
-# Positioning
-# Rotation
+# Transform
+
+Transformations define the scale, rotation and position of an element in a scene.
+
+## Position
+
+Position defines the location of an element in the scene relative to the origin of parent.
+
+The current position of an element can be retrieved using the following methods
+ - `const pos: Vector2 = node.position()`
+ - `const pos: number = node.position.x()`
+ - `const pos: number = node.position.y()`
+
+The position of an element can be modified using the following methods
+ - `node.position([1,2])`
+ - `node.position(new Vector2(1,2))`
+ - `node.position.x(1)`
+ - `node.position.y(2)`
+
+## Rotation
+
+Rotation defines the angle in degrees of an element in the scene relative to the rotation of parent.
+
+The current rotation of an element can be retrieved using the following methods
+ - `const rot: number = node.rotation()`
+
+The rotation of an element can be modified using the following methods
+ - `node.rotation(45)`
+ - 
+## Scale
+
+Scale defines the scale of an element in the scene relative to the scale of parent.
+
+The current position of an element can be retrieved using the following methods
+ - `const pos: Vector2 = node.scale()`
+ - `const pos: number = node.scale.x()`
+ - `const pos: number = node.scale.y()`
+
+The position of an element can be modified using the following methods
+ - `node.scale([1,2])`
+ - `node.scale(new Vector2(1,2))`
+ - `node.scale.x(1)`
+ - `node.scale.y(2)`
+
+## Relative vs. Absolute
+
+Elements can either be transformed in terms of local space or absolute(relative to the scene).
+
+The absolute position, scale & rotation can be retrieved using the same methods as stated before except with an "absolute" prefix as the follow
+ - `node.absolutePosition()`
+ - `node.absoluteRotation()`
+ - `node.absoluteScale()`
+
+You can read more about them (here)[https://motioncanvas.io/docs/positioning].
 
 # References
 
+Elements often need to be stored in-order to be animated. However, storing in the varaible is not a scale-able solution.
+
+The following is an example from the documentation.
+Code: 
+```TypeScript
+const rectA = <Rect />;
+const rectB = <Rect />;
+const circle = <Circle>{rectA}</Circle>;
+view.add(
+  <Layout>
+    {circle}
+    {rectB}
+  </Layout>,
+);
+```
+Structure:
+```TypeScript
+view.add(
+  <Layout>
+    <Circle>
+      <Rect />
+    </Circle>
+    <Rect />
+  </Layout>,
+);
+```
+
+An alternative is to use references.
+
+```TypeScript
+const rectA = createRef<Rect>();
+const rectB = createRef<Rect>();
+
+view.add(
+  <Layout>
+    <Circle>
+      <Rect ref={rectA} />
+    </Circle>
+    <Rect ref={rectB} />
+  </Layout>,
+);
+```
+
+It can be observed that the alternative has a more readable structure, while still having variables that reference elements that can be used for animations later.
+
+You can read more about them (here)[https://motioncanvas.io/docs/references].
+
 # Simple Animations
 
-# Understanding the Editor
