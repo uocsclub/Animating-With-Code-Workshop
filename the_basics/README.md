@@ -270,5 +270,64 @@ It can be observed that the alternative has a more readable structure, while sti
 
 You can read more about them (here)[https://motioncanvas.io/docs/references].
 
-# Simple Animations
+# Animations
 
+## From().To()
+
+The simplest animation uses the from-to syntax - in which transformations can be lerped from one point to another under a given time frame.
+
+`node.transform_property(start_val, duration).to(end_val, duration)`
+
+## Animation Flow
+
+ - `all(...tasks: ThreadGenerator[]): ThreadGenerator`
+
+The `all` method ensures that all animations are completed until the end before starting the next animation.
+
+ - `any(...tasks: ThreadGenerator[]): ThreadGenerator`
+
+The `any` method ensures that at least one animations are completed until the end before starting the next animation.
+
+ - `chain(...tasks: ThreadGeneratorCallback[]): ThreadGenerator`
+
+The `chain` method ensures that all animations are completed in sequence one after the other without delay between animations.
+
+ - `delay(time: numbertask: ThreadGeneratorCallback): ThreadGenerator`
+
+The `delay` method starts the animation after a delay.
+
+ - `sequence(delay: number...tasks: ThreadGenerator[]): ThreadGenerator`
+
+The `sequence` method is merger of `chain` & `delay` method.
+
+ - `loop(iterations: number, factory: LoopCallback): ThreadGenerator`
+
+The `loop` method repeats a animation n times.
+
+## Tween
+
+Tween is a function that generates an animation using duration and a callback.
+
+example from the docs
+```TypeScript
+tween(2, value => {
+  circle().position.x(map(-300, 300, value));
+});
+```
+
+## Timing Functions
+
+Time functions are a useful tool in creating natural and interesting animations.
+
+Timing functions has the following function signature - `func(value: number, from?: number, to?: number)`
+
+```TypeScript
+tween(2, value => {
+  circle().position.x(easeInOut(-300, 300, value));
+});
+```
+
+A full list can be seen (here)[https://motioncanvas.io/api/core/tweening/#easeInBack]
+
+
+## Spring

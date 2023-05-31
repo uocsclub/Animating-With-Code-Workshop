@@ -1,7 +1,8 @@
 import { Circle, Layout, Rect, View2D } from '@motion-canvas/2d/lib/components';
 import {makeScene2D} from '@motion-canvas/2d/lib/scenes';
-import { waitFor } from '@motion-canvas/core/lib/flow';
-import { Vector2 } from '@motion-canvas/core/lib/types';
+import { all, any, waitFor } from '@motion-canvas/core/lib/flow';
+import { easeInOutBounce, map, tween } from '@motion-canvas/core/lib/tweening';
+import { Color, Vector2 } from '@motion-canvas/core/lib/types';
 import { createRef } from '@motion-canvas/core/lib/utils';
 
 const size_unit = 100;
@@ -104,10 +105,59 @@ function* references(view: View2D) {
 }
 
 
-function* simple_animation(view: View2D) {
+function* animation(view: View2D) {
+    const rectA = createRef<Rect>();
+    const rectB = createRef<Rect>();
 
+    view.add(
+        <Rect layout>
+            <Circle size={size_unit * 2} fill={"red"}>
+                <Rect ref={rectA} width={size_unit * 1} height={size_unit * 1} fill={"white"}/>
+            </Circle>
+            <Rect ref={rectB} width={size_unit * 1} height={size_unit * 1} fill={"green"}/>
+        </Rect>
+    );
+
+    yield* waitFor(1);
+
+    yield* rectB().scale(1,0).to(2,1);
+    yield* rectB().scale(rectB().scale(), 0).to(1,1);
+
+    yield* waitFor(1);
+    
+    yield* all(
+        rectB().scale(rectB().scale(), 0).to(3,2),
+        rectA().rotation(rectA().rotation(), 0).to(45,1),
+    )
+
+    yield* waitFor(1);
+    
+    yield* any(
+        rectB().scale(rectB().scale(), 0).to(0.5,1),
+        rectA().rotation(rectA().rotation(), 0).to(0,3),
+    )
+
+    let margin_x = rectB().margin.left();
+
+    yield* rectB().margin.left(margin_x, 0).to(margin_x + 2 * size_unit, 0.3);
+
+    yield* waitFor(1);
+
+    margin_x = rectB().margin.left();
+
+    yield* tween(1, value => rectB().margin.left(map(margin_x, 0, value)));
+
+    yield* waitFor(1);
+
+    margin_x = rectB().margin.left();
+
+    yield* tween(1, value => rectB().margin.left(easeInOutBounce(0, margin_x + 2 * size_unit, value)));
+
+    yield* waitFor(1);
+
+    yield* tween(1, value => rectB().fill(Color.lerp("green", "blue", value)));
 
     yield* waitFor(1);
 }
 
-export default makeScene2D(simple_animation);
+export default makeScene2D(animation);
