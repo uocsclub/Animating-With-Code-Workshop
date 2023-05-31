@@ -1,121 +1,116 @@
-# Scenes
+# The Basics
 
-Scenes are a iterator that define a series of instructions on how to animate and render a given frame. TLDR - this is a script where you do all your animations.
+## Scenes
 
-Scenes can be created using the following instructions:
-1. Create a TypeScript file in `src\scenes\`
+Scenes are iterators that define a series of instructions on how to animate and render a given frame. In simple terms, scenes are scripts where you can create and control your animations.
 
-Scenes must be created with the following template.
+To create a scene, follow these steps:
 
-new_scene.ts
-```TypeScript
-import {makeScene2D} from '@motion-canvas/2d/lib/scenes';
+1. Create a TypeScript file in the `src/scenes/` directory.
+
+Scenes must follow the provided template:
+
+```typescript
+import { makeScene2D } from '@motion-canvas/2d/lib/scenes';
 
 export default makeScene2D(function* (view) {
-  // animation
+  // Animation instructions
 });
 ```
 
 **Note**:
-makeScene2D() takes a function generator and turns it into a scene which we then import in our project file. The function generator describes the flow of the animation, while the provided view argument is used to add elements to the scene. [source](https://motioncanvas.io/docs/quickstart/)
+The `makeScene2D()` function takes a generator function and turns it into a scene. The generator function describes the flow of the animation, while the `view` argument is used to add elements to the scene. For more information, refer to the [source](https://motioncanvas.io/docs/quickstart/).
 
+2. Add the new scene to the project
 
-1. Add the new scene to the project
+The project file is the main TypeScript file that defines the scenes visible in the editor.
 
-A project is the main typescript file that defines the scenes that are visible in the editor.
+To add a scene, import the new file and add it to the `scenes` array:
 
-Scenes can be added by first importing the new file & adding to the scenes array.
+```typescript
+import { makeProject } from '@motion-canvas/core';
 
-```TypeScript
-import {makeProject} from '@motion-canvas/core';
-
-// importing scene
-import new_scene from './scenes/new_scene?scene';
+// Importing the new scene
+import newScene from './scenes/new_scene?scene';
 
 export default makeProject({
-    //adding new scene to array
-    scenes: [new_scene],
+  // Adding the new scene to the array
+  scenes: [newScene],
 });
 ```
 
 # Creating Elements
 
-## Add
+## Adding Elements
 
-Scenes start out empty. Therefore elements (Rect, Circle, Line, Img, etc.) need to be added to a scene.
+Scenes start out empty, so you need to add elements (such as Rect, Circle, Line, Img, etc.) to the scene.
 
-This is done using the `add` method. Where, `parent.add(children[])` adds a list of elements to the scene.
+You can add elements using the `add` method, which takes a list of elements as its argument.
 
-This method can be used in the following ways:
-1. Using constructor
+There are two ways to use the `add` method:
 
-First create the element using the constructor. Followed by calling the `add` method on view.
+1. Using the constructor:
 
-```TypeScript
-let circle = new Circle({width: 2, fill:"red"}); // this creates a reference of the initialized element - so that it can be modified later
+First, create an element using the constructor, and then call the `add` method on the `view` object.
+
+```typescript
+let circle = new Circle({ width: 2, fill: "red" }); // Create a reference to the initialized element for later modifications
 view.add([circle]);
 
-view.add([new Circle({width: 1, fill:"green"})]);
+view.add([new Circle({ width: 1, fill: "green" })]);
 ```
 
-2. Using JSX
+2. Using JSX:
 
-JSX is a syntax extension for JavaScript that lets you write HTML-like markup inside a JavaScript file. Although there are other ways to write components, most React developers prefer the conciseness of JSX, and most codebases use it. (source)[https://react.dev/learn/writing-markup-with-jsx]
+JSX is a syntax extension for JavaScript that allows you to write HTML-like markup inside a JavaScript file. In the workshop, we will use the JSX notation, as it is more concise and readable compared to the constructor approach.
 
-The following two code blocks shows a similar implementation to what can be seen in `Using constructor`.
+Here are examples of using JSX to add elements:
 
-```TypeScript
+```typescript
 view.add(
   <>
-    <Circle width={2} fill={"red"}>
-    </Circle>
-    <Circle width={1} fill={"green"}>
-    </Circle>
+    <Circle width={2} fill={"red"}></Circle>
+    <Circle width={1} fill={"green"}></Circle>
   </>
 );
 ```
 
-```TypeScript
-view.add(
-  <Circle width={2} fill={"red"}>
-  </Circle>
-);
-view.add(
-  <Circle width={1} fill={"green"}>
-  </Circle>
-);
+```typescript
+view.add(<Circle width={2} fill={"red"}></Circle>);
+view.add(<Circle width={1} fill={"green"}></Circle>);
 ```
 
-**Note**: The workshop will use the JSX notation as it is more concise and readable compared to the former.
+**Note**: The workshop will use JSX notation.
 
-## Remove
+## Removing Elements
 
-Once an element is added - it can be removed using the `remove` method; in the form `element.remove()`.
+Once an element is added, you can remove it using the `remove` method, which is called on the element itself.
 
-```TypeScript
-// I lied - turns out I didn't use JSX
-let circle = new Circle({width: 2, fill:"red"});
+```typescript
+let circle = new Circle({ width: 2, fill: "red" });
 view.add([circle]);
 
-circle.remove()
+circle.remove();
 ```
 
-## Parenting
+## Parenting Elements
 
-Scenes are defined as a graph - specifically a tree. The `view` is root of the scene hierarchy.
+Scenes are defined as a graph, specifically a tree structure. The `view` object is the root of the scene hierarchy.
 
-The following is an example of the scene hierarchy as it is modified through code.
-```TypeScript
+Here's an example of the scene hierarchy as it is modified through code:
+
+```typescript
 view.add(
   <>
-    <Circle />
+    <Circle></Circle>
     <Layout>
-      <Rect />
+      <Rect></Rect>
       <Txt>Hi</Txt>
     </Layout>
-  </>,
+  </>
 );
 ```
+
 ```
 view
 ├── Circle
@@ -124,9 +119,12 @@ view
     └── Txt
 ```
 
-```TypeScript
-Rect.add(<Line/>)
 ```
+
+typescript
+Rect.add(<Line></Line>);
+```
+
 ```
 view
 ├── Circle
@@ -136,9 +134,10 @@ view
     └── Txt
 ```
 
-```TypeScript
-Circle.remove()
+```typescript
+Circle.remove();
 ```
+
 ```
 view
 └── Layout
@@ -146,91 +145,93 @@ view
     │   └── Line
     └── Txt
 ```
+
 ## Other Functions
 
-There exists multiple methods that modifies the scene hierarchy - it is recommended to take a look at all of them as they can be quite useful.
+There are several methods available to modify the scene hierarchy. It is recommended to explore all of them, as they can be quite useful.
 
-These are all the functions:
- - add
- - insert
- - remove
- - reparent
- - moveUp
- - moveDown
- - moveToTop
- - moveToBottom
- - moveTo
- - moveAbove
- - moveBelow
- - removeChildren
+The available functions are:
+- `add`
+- `insert`
+- `remove`
+- `reparent`
+- `moveUp`
+- `moveDown`
+- `moveToTop`
+- `moveToBottom`
+- `moveTo`
+- `moveAbove`
+- `moveBelow`
+- `removeChildren`
 
-You can read more about them (here)[https://motioncanvas.io/docs/hierarchy].
+For more information, refer to the [hierarchy documentation](https://motioncanvas.io/docs/hierarchy).
 
-# Transform
+# Transformations
 
-Transformations define the scale, rotation and position of an element in a scene.
+Transformations define the scale, rotation, and position of an element in a scene.
 
 ## Position
 
-Position defines the location of an element in the scene relative to the origin of parent.
+Position defines the location of an element in the scene relative to its parent's origin.
 
-The current position of an element can be retrieved using the following methods
- - `const pos: Vector2 = node.position()`
- - `const pos: number = node.position.x()`
- - `const pos: number = node.position.y()`
+You can retrieve the current position of an element using the following methods:
+- `const pos: Vector2 = node.position()`
+- `const pos: number = node.position.x()`
+- `const pos: number = node.position.y()`
 
-The position of an element can be modified using the following methods
- - `node.position([1,2])`
- - `node.position(new Vector2(1,2))`
- - `node.position.x(1)`
- - `node.position.y(2)`
+To modify the position of an element, you can use the following methods:
+- `node.position([1,2])`
+- `node.position(new Vector2(1,2))`
+- `node.position.x(1)`
+- `node.position.y(2)`
 
 ## Rotation
 
-Rotation defines the angle in degrees of an element in the scene relative to the rotation of parent.
+Rotation defines the angle in degrees of an element in the scene relative to its parent's rotation.
 
-The current rotation of an element can be retrieved using the following methods
- - `const rot: number = node.rotation()`
+You can retrieve the current rotation of an element using the following method:
+- `const rot: number = node.rotation()`
 
-The rotation of an element can be modified using the following methods
- - `node.rotation(45)`
- - 
+To modify the rotation of an element, use the following method:
+- `node.rotation(45)`
+
 ## Scale
 
-Scale defines the scale of an element in the scene relative to the scale of parent.
+Scale defines the scale of an element in the scene relative to its parent's scale.
 
-The current position of an element can be retrieved using the following methods
- - `const pos: Vector2 = node.scale()`
- - `const pos: number = node.scale.x()`
- - `const pos: number = node.scale.y()`
+You can retrieve the current scale of an element using the following methods:
+- `const scale: Vector2 = node.scale()`
+- `const scale: number = node.scale.x()`
+- `const scale: number = node.scale.y()`
 
-The position of an element can be modified using the following methods
- - `node.scale([1,2])`
- - `node.scale(new Vector2(1,2))`
- - `node.scale.x(1)`
- - `node.scale.y(2)`
+To modify the scale of an element, you can use the following methods:
+- `node.scale([1,2])`
+- `node.scale(new Vector2(1,2))`
+- `node.scale.x(1)`
+- `node.scale.y(2)`
 
 ## Relative vs. Absolute
 
-Elements can either be transformed in terms of local space or absolute(relative to the scene).
+Elements can be transformed in terms of local space (relative to their parent) or absolute space (relative to the scene).
 
-The absolute position, scale & rotation can be retrieved using the same methods as stated before except with an "absolute" prefix as the follow
- - `node.absolutePosition()`
- - `node.absoluteRotation()`
- - `node.absoluteScale()`
+To retrieve the absolute position, scale, and rotation of an element, use the same methods as before, but with an "absolute" prefix:
+- `node.absolutePosition()`
+- `node.absoluteRotation()`
+- `node.absoluteScale()`
 
-You can read more about them (here)[https://motioncanvas.io/docs/positioning].
+For more information, refer to the [positioning documentation](https://motioncanvas.io/docs/positioning).
 
 # References
 
-Elements often need to be stored in-order to be animated. However, storing in the varaible is not a scale-able solution.
+Elements often need to be stored in variables for later use in animations. However, storing elements directly in variables can become cumbersome and less scalable.
 
-The following is an example from the documentation.
-Code: 
-```TypeScript
+Here's an example from the documentation:
+
+```typescript
 const rectA = <Rect />;
 const rectB = <Rect />;
 const circle = <Circle>{rectA}</Circle>;
+
 view.add(
   <Layout>
     {circle}
@@ -238,8 +239,9 @@ view.add(
   </Layout>,
 );
 ```
+
 Structure:
-```TypeScript
+```typescript
 view.add(
   <Layout>
     <Circle>
@@ -250,9 +252,11 @@ view.add(
 );
 ```
 
-An alternative is to use references.
+An alternative approach is
 
-```TypeScript
+ to use references:
+
+```typescript
 const rectA = createRef<Rect>();
 const rectB = createRef<Rect>();
 
@@ -266,50 +270,53 @@ view.add(
 );
 ```
 
-It can be observed that the alternative has a more readable structure, while still having variables that reference elements that can be used for animations later.
+Using references provides a more readable structure while still allowing variables to reference elements for later use in animations.
 
-You can read more about them (here)[https://motioncanvas.io/docs/references].
+For more information, refer to the [references documentation](https://motioncanvas.io/docs/references).
 
 # Animations
 
 ## From().To()
 
-The simplest animation uses the from-to syntax - in which transformations can be lerped from one point to another under a given time frame.
+The simplest animation uses the `from-to` syntax, in which transformations can be interpolated from one point to another within a given time frame.
 
-`node.transform_property(start_val, duration).to(end_val, duration)`
+```typescript
+node.transform_property(start_val, duration).to(end_val, duration);
+```
 
 ## Animation Flow
 
- - `all(...tasks: ThreadGenerator[]): ThreadGenerator`
+- `all(...tasks: ThreadGenerator[]): ThreadGenerator`
 
-The `all` method ensures that all animations are completed until the end before starting the next animation.
+The `all` method ensures that all animations are completed before starting the next animation.
 
- - `any(...tasks: ThreadGenerator[]): ThreadGenerator`
+- `any(...tasks: ThreadGenerator[]): ThreadGenerator`
 
-The `any` method ensures that at least one animations are completed until the end before starting the next animation.
+The `any` method ensures that at least one animation is completed before starting the next animation.
 
- - `chain(...tasks: ThreadGeneratorCallback[]): ThreadGenerator`
+- `chain(...tasks: ThreadGeneratorCallback[]): ThreadGenerator`
 
-The `chain` method ensures that all animations are completed in sequence one after the other without delay between animations.
+The `chain` method ensures that all animations are completed in sequence, one after the other, without any delay between animations.
 
- - `delay(time: numbertask: ThreadGeneratorCallback): ThreadGenerator`
+- `delay(time: number, task: ThreadGeneratorCallback): ThreadGenerator`
 
-The `delay` method starts the animation after a delay.
+The `delay` method starts the animation after a specified delay.
 
- - `sequence(delay: number...tasks: ThreadGenerator[]): ThreadGenerator`
+- `sequence(delay: number, ...tasks: ThreadGenerator[]): ThreadGenerator`
 
-The `sequence` method is merger of `chain` & `delay` method.
+The `sequence` method is a combination of the `chain` and `delay` methods.
 
- - `loop(iterations: number, factory: LoopCallback): ThreadGenerator`
+- `loop(iterations: number, factory: LoopCallback): ThreadGenerator`
 
-The `loop` method repeats a animation n times.
+The `loop` method repeats an animation a specified number of times.
 
 ## Tween
 
-Tween is a function that generates an animation using duration and a callback.
+A tween is a function that generates an animation using a duration and a callback.
 
-example from the docs
-```TypeScript
+Example from the documentation:
+
+```typescript
 tween(2, value => {
   circle().position.x(map(-300, 300, value));
 });
@@ -317,17 +324,21 @@ tween(2, value => {
 
 ## Timing Functions
 
-Time functions are a useful tool in creating natural and interesting animations.
+Timing functions are useful for creating natural and interesting animations.
 
-Timing functions has the following function signature - `func(value: number, from?: number, to?: number)`
+Timing functions have the following function signature: `func(value: number, from?: number, to?: number)`
 
-```TypeScript
+Some prominent timing functions include:
+- `easeIn`
+- `easeInOut`
+- `easeOut`
+
+Here's an example of using a timing function:
+
+```typescript
 tween(2, value => {
   circle().position.x(easeInOut(-300, 300, value));
 });
 ```
 
-A full list can be seen (here)[https://motioncanvas.io/api/core/tweening/#easeInBack]
-
-
-## Spring
+For a full list of available timing functions, refer to the [motioncanvas documentation](https://motioncanvas.io/api/core/tweening/#easeInBack).
